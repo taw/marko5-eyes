@@ -1,0 +1,28 @@
+$ let max_eye_movement = 0.3 * input.sz
+$ let dx = input.mx !== null ? (input.mx - input.x) : 0
+$ let dy = input.my !== null ? (input.my - input.y) : 0
+$ let dl = Math.max(0.000001, Math.sqrt(dx*dx + dy*dy))
+$ let displacement = Math.min(max_eye_movement, dl)
+$ let rx = input.x + dx/dl * displacement
+$ let ry = input.y + dy/dl * displacement
+
+<g>
+  <circle class="eye1" cx=(input.x) cy=(input.y) r=(input.sz) />
+  <circle class="eye2" cx=(rx) cy=(ry) r=(input.sz * 0.5) style=`fill: ${input.color}`/>
+  <circle class="eye3" cx=(rx) cy=(ry) r=(input.sz * 0.2) />
+</g>
+
+style {
+  .eye1 {
+    fill: white;
+    stroke: black;
+    stroke-width: 3px;
+  }
+  .eye2 {
+    stroke: black;
+    stroke-width: 1px;
+  }
+  .eye3 {
+    fill: black;
+  }
+}

@@ -1,0 +1,66 @@
+<svg id="eyes" on-mousemove("move")>
+  <for|{x,y,sz,color}| of=state.eyes>
+    <spooky-eye x=x y=y sz=sz color=color mx=(state.mx) my=(state.my)></spooky-eye>
+  </for>
+</svg>
+
+class {
+  onCreate() {
+    this.state = {
+      wh: 0,
+      ww: 0,
+      eyes: [],
+      mx: 0,
+      my: 0,
+    }
+  }
+  onMount() {
+    this.state.wh = window.innerHeight
+    this.state.ww = window.innerWidth
+    // init it to something random if mouse starts outside window
+    this.state.mx = Math.random() * this.state.ww;
+    this.state.my = Math.random() * this.state.wh;
+    [...Array.from({ length: 1000 })].forEach(() => this.placeRandomEye())
+  }
+  placeRandomEye() {
+    let sz = 20 + Math.random() * 60
+    let x = sz + Math.random() * (this.state.ww - 2 * sz)
+    let y = sz + Math.random() * (this.state.wh - 2 * sz)
+    let color = this.random_color()
+    let new_eye = {x, y, sz, color}
+    if (this.can_place_eye(new_eye)) {
+      this.state.eyes.push(new_eye)
+    }
+  }
+  random_color() {
+    let h = Math.random() * 360
+    let s = Math.round(50 + Math.random() * 50)
+    let l = Math.round(30 + Math.random() * 40)
+    return `hsl(${h}, ${s}%, ${l}%)`
+  }
+  eye_distance(eye1, eye2) {
+    let dx = eye1.x - eye2.x;
+    let dy = eye1.y - eye2.y;
+    return Math.sqrt((dx * dx) + (dy * dy))
+  }
+  can_place_eye(new_eye) {
+    return this.state.eyes.every(eye =>
+      this.eye_distance(eye, new_eye) >= eye.sz + new_eye.sz + 5
+    )
+  }
+  move(e) {
+    let svg = document.getElementById("eyes")
+    let rect = svg.getBoundingClientRect()
+    this.state.mx = event.pageX - rect.x
+    this.state.my = event.pageY - rect.y
+  }
+}
+
+style {
+  svg {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    background-color: #aaa;
+  }
+}
